@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>ssh</display-name>
+	<welcome-file-list>
+		<welcome-file>index.do</welcome-file>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+
+
+	<!-- 指定spring的配置文件，默认从web根目录寻找配置文件，我们可以通过spring提供的classpath:前缀指定从类路径下寻找 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applic*.xml</param-value>
+	</context-param>
+	<!-- 对Spring容器进行实例化 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>     
+       <listener-class>com.lxinet.fenxiao.listener.InitListener</listener-class>     
+    </listener>
+	
+	<!-- 使用spring解决struts2的中文乱码的问题 -->
+	<filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>adminLogin</filter-name>
+		<filter-class>com.lxinet.fenxiao.filter.AdminLoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>adminLogin</filter-name>
+		<url-pattern>/admin/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>userLogin</filter-name>
+		<filter-class>com.lxinet.fenxiao.filter.UserLoginFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>userLogin</filter-name>
+		<url-pattern>/user/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>SetcharFilter</filter-name>
+		<filter-class>com.lxinet.fenxiao.filter.SetcharFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SetcharFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- struts2 的配置 -->
+	<filter>
+		<filter-name>struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 配置 使用spring解决hibernate因session关闭导致的延迟加载例外问题 -->
+	<filter>
+		<filter-name>OpenSessionInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+		<init-param>
+			<!-- 指定org.springframework.orm.hibernate3.LocalSessionFactoryBean在spring配置文件中的名称,
+			默认值为sessionFactory.如果LocalSessionFactoryBean在spring中的名称不是sessionFactory,该参数一定要指定,
+			否则会出现找不到sessionFactory的例外 -->
+			<param-name>sessionFactoryBeanName</param-name>
+			<param-value>sessionFactory</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>OpenSessionInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	
+	<filter-mapping>
+		<filter-name>struts2</filter-name>
+		<url-pattern>*.do</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+</web-app>
